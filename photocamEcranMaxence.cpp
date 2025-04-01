@@ -162,24 +162,29 @@ void setupYUV422() {
 
 void loop() {
     Serial.println(F("READY"));
-    Serial.flush();
+    //Serial.flush();
+    captureImg(WIDTH,HEIGHT,false);
+
+    Serial.println(F("COULEUR"));
+    captureImg(WIDTH,HEIGHT,true);
+
     
     // Attendre la commande 'C' pour capturer une seule image
-    while (true) {
-        if (Serial.available() > 0) {
-            char command = Serial.read();  // Lire la commande envoyée par le PC
+    // while (true) {
+    //     if (Serial.available() > 0) {
+    //         char command = Serial.read();  // Lire la commande envoyée par le PC
 
-            // Si la commande est 'C', capturer l'image et quitter la boucle
-            if (command == 'C') {
-                Serial.println(F("Capture d'image commencée..."));
-                captureImg(WIDTH, HEIGHT, false);  // Capture de l'image (Luminance)
-                Serial.println(F("COULEUR"));
-                Serial.flush();
-                captureImg(WIDTH, HEIGHT, true);   // Capture de l'image (Chromatique)
-                break;  // Quitter la boucle après avoir capturé l'image
-            }
-        }
-    }
+    //         // Si la commande est 'C', capturer l'image et quitter la boucle
+    //         if (command == 'C') {
+    //             Serial.println(F("Capture d'image commencée..."));
+    //             captureImg(WIDTH, HEIGHT, false);  // Capture de l'image (Luminance)
+    //             Serial.println(F("COULEUR"));
+    //             Serial.flush();
+    //             captureImg(WIDTH, HEIGHT, true);   // Capture de l'image (Chromatique)
+    //             break;  // Quitter la boucle après avoir capturé l'image
+    //         }
+    //     }
+    // }
     // Serial.println(F("READY"));
     // captureImg(WIDTH,HEIGHT,false);
 
@@ -257,17 +262,24 @@ void captureImg(uint16_t width, uint16_t height, bool chroma) {
     interrupts();
 
     // Dessin de l'image sur l'écran TFT
-    // for (int y = 0; y < HEIGHT; y++) {
-    //   for (int x = 0; x < WIDTH; x++) {
-    //     uint16_t color = grayscaleToRGB565(frame[y][x]);
-    //     tft.drawPixel(x, y, color);  // Afficher chaque pixel sur l'écran TFT
+    for (int y = 0; y < HEIGHT; y++) {
+      for (int x = 0; x < WIDTH; x++) {
+        uint16_t color = grayscaleToRGB565(frame[y][x]);
+        tft.drawPixel(x, y, color);  // Afficher chaque pixel sur l'écran TFT
+      }
+    }
+
+    // for (y = 0; y < height; y++) {
+    //   for (x = 0; x < width; x++) {
+    //     uint8_t gray = frame[y][x];
+    //     tft.drawPixel(x, y, tft.color565(gray, gray, gray));
     //   }
     // }
+    
     for (y = 0; y < height; y++) {
-        for (x = 0; x < width; x++) {
-          uint8_t gray = frame[y][x];
-          tft.drawPixel(x, y, tft.color565(gray, gray, gray));
-          //Serial.print("Image affichée !");
-        }
+      for (x = 0; x < width; x++) {
+        Serial.write(frame[y][x]); // Utilisation de Serial.write pour un envoi binaire plus rapide
+      }
     }
+    
 }
