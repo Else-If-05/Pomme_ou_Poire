@@ -3,7 +3,7 @@ from PIL import Image  # Importer la bibliothèque Pillow
 
 # Configurez le port série et le débit en bauds
 ser = serial.Serial('COM4', 460800)  # Remplacez 'COM3' par le port série de votre Arduino
-ser.flushInput()
+ser.flush()
 
 # Dimensions de l'image
 width = 320
@@ -24,12 +24,6 @@ while 1:
             except:
                 pass
 
-    command = input("Entrez 'C' pour commencer la capture d'image : ")
-
-    # Envoi de la commande 'C' à l'Arduino
-    if command == 'C':
-        ser.write(b'C')
-
     # Lire les données de luminance
     frame_lum = []
     try:
@@ -46,7 +40,7 @@ while 1:
     while True:
         try:
             if ser.in_waiting > 0:
-                print ("it's okay")
+                #print ("it's okay")
                 line = ser.readline().decode('utf-8').strip()  # Lire une ligne et la décoder
                 print(f"Réception de données : {line}")
                 if line == "COULEUR":
@@ -97,21 +91,23 @@ while 1:
             bitmap.append((R,G,B))
             index += 1
 
+
+
     # Créer une image en couleur avec Pillow
     img = Image.new('RGB', (width, height))  # 'RGB' pour image couleur
     img.putdata(bitmap)  # Ajouter les données de l'image
-    img.save(f"image/col/image_recue_couleur_{num}.png")  # Enregistrer l'image au format PNG
-    print(f"Image enregistrée sous le nom 'image_recue_couleur_{num}.png'.")
+    img.save("captured_image_contrasted.png")  # Enregistrer l'image au format PNG
+    print(f"Image enregistrée sous le nom 'captured_image_contrasted.png'.")
 
     img_col = Image.new('L', (width, height))  # 'L' pour niveaux de gris
     img_col.putdata(frame_col)  # Ajouter les données de chromatique
-    img_col.save(f"image/chro/image_chromatique_{num}.png")  # Enregistrer l'image
-    print(f"Image de chromatique enregistrée sous le nom 'image_chromatique_{num}.png'.")
+    img_col.save("captured_image.png")  # Enregistrer l'image
+    print(f"Image de chromatique enregistrée sous le nom 'captured_image.png'.")
 
     img_lum = Image.new('L', (width, height))  # 'L' pour niveaux de gris
     img_lum.putdata(frame_lum)  # Ajouter les données de luminance
-    img_lum.save(f"image/lum/image_luminance_{num}.png")  # Enregistrer l'image
-    print(f"Image de chromatique enregistrée sous le nom 'image_chromatique_{num}.png'.")
+    img_lum.save("image.png")  # Enregistrer l'image
+    print(f"Image de chromatique enregistrée sous le nom 'image.png'.")
     num+=1
 
 ser.close()
