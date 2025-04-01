@@ -1,10 +1,10 @@
-//d'abord lancer le code .cpp puis celui ci
+#d abord lancer le code .cpp puis celui ci
 import serial
 import numpy as np
 from PIL import Image, ImageEnhance
 
 # Configuration
-PORT = "COM13"  # Change to match your Arduino port
+PORT = "COM5"  # Change to match your Arduino port
 BAUDRATE = 460800  # Must match the Arduino Serial.begin(460800)
 WIDTH, HEIGHT = 320, 240  # QVGA Resolution
 
@@ -24,8 +24,7 @@ while True:
                     frame[y, x] = int.from_bytes(pixel, "big")
 
         img = Image.fromarray(frame, mode="L")  # Convert to grayscale image
+        img.show()
         enhancer = ImageEnhance.Contrast(img)
-        img_contrasted = enhancer.enhance(2.0)  # Increase contrast by a factor of 2
-        img_contrasted.show()  # Show the image with increased contrast
-        img_contrasted.save("captured_image_contrasted.png")  # Save it
+        img.save("captured_image.png")  # Save it
         print("Image received and saved with increased contrast.")
